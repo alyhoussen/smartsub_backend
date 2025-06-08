@@ -1,0 +1,4 @@
+
+##Mandray table anankiray
+##Manao CRUD aniny table amin'ny springboot
+##Miaraka am detail rehetra momba ny operation behind the scene mampandeha anazy amn laoniny

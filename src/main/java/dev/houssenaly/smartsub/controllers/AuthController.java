@@ -12,6 +12,8 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.AuthenticationException;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -32,8 +34,12 @@ public class AuthController {
         String email = request.get("email");
         String password = request.get("password");
 
-        User user = userService.registerUser(name, email, password);
+        Boolean user = userService.registerUser(name, email, password);
         Map<String, String> response = new HashMap<>();
+        if(user!= true){
+            response.put("error", "L'email est deja utilise par un autre utilisateur");
+            return response;
+        }
         response.put("message", "Utilisateur créé avec succès");
         return response;
     }
@@ -43,15 +49,23 @@ public class AuthController {
     public Map<String, String> login(@RequestBody Map<String, String> request, HttpSession session) {
         String email = request.get("email");
         String password = request.get("password");
-
-        // Authentification via AuthenticationManager
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
-        );
-        // À la réussite, la session est créée et gérée automatiquement
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Connexion réussie");
-        return response;
+        
+        try{
+            
+            // Authentification via AuthenticationManager
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password)
+                );
+            // À la réussite, la session est créée et gérée automatiquement
+            response.put("message", "Connexion réussie");
+            return response;
+            
+        }catch(Exception e){
+
+            response.put("error", "Mot de passe ou email incorrecte");
+            return response;
+        }
     }
 
     // Endpoint pour récupérer les informations de l'utilisateur connecté

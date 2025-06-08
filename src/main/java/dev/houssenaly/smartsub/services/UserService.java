@@ -19,14 +19,15 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(String name, String email, String password) {
+    public Boolean registerUser(String name, String email, String password) {
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("L'email est déjà utilisé !");
+            return false;
         }
         User user = new User();
         user.setName(name);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return true;
     }
 }
